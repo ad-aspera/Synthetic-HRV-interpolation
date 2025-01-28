@@ -6,6 +6,8 @@ class SincPsd():
     """SINC (Whitetaker-Shanon) interpolation. Tested to work."""
 
 def signal_to_PSD(signal:pd.Series, sampling_freq = 100):
+
+
     fft = np.fft.fft(signal)
     freq = np.fft.fftfreq(len(fft), 1/sampling_freq)
 
@@ -21,6 +23,7 @@ def sinc_interpolate(signal:pd.Series):
     interpolated = pd.Series(0, index=constant_grid)
     for point, magnitude in signal.items():
         interpolated += magnitude * np.sinc((point-constant_grid) / T)
+
     return interpolated
 
 def sinc_and_psd(signal:pd.Series, window=None, window_fraction=1/16):
@@ -29,12 +32,14 @@ def sinc_and_psd(signal:pd.Series, window=None, window_fraction=1/16):
     signal = sinc_interpolate(signal)
 
     if window:
-        signal = window(signal, window, window_fraction)
+        signal = window_func(signal, window, window_fraction)
 
-    return signal_to_PSD(signal, 1/(signal.index[1]- signal.index[0]))
+   
+
+    signal, signal_to_PSD(signal, 1/np.mean(np.diff(signal.index)))
 
 
-def window(signal:pd.Series, window_fraction=1/16, window_type='hann'):
+def window_func(signal:pd.Series, window_type='hann', window_fraction=1/16):
     signal = signal.copy()
     window_length = int(len(signal) * window_fraction)
 
@@ -51,9 +56,21 @@ def window(signal:pd.Series, window_fraction=1/16, window_type='hann'):
     signal.iloc[:len(subwindow1)] *= subwindow1
     signal.iloc[-len(subwindow2):] *= subwindow2
 
-    print("{window_type} window applied over:")
+    print(f"{window_type} window applied over:")
     print(f"left: index 0 to {len(subwindow1)-1}")
     print(f"right: index {len(signal)-len(subwindow2)} to {len(signal)}")
     
     return signal
 
+if __name__ == '__main__':
+    import BasicGenerator
+    frequencies = [0.15, 0.35, 0.45]
+    magnitudes = [1, 0.5, 0.3]
+
+    signal = BasicGenerator.generate_combined_sines(frequencies, magnitudes)
+
+    sampled_HRV_signal = BasicGenerator.generate_sin_HRV(signal)
+
+    FFT_input_signal, PSD = sinc_and_psd(signal, window = 'hann', window_fraction = 1/16)
+
+    print(PSD)

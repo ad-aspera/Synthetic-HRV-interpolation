@@ -3,6 +3,7 @@ import plotly.graph_objects as go
 import pandas as pd
 import numpy as np
 
+
 class SignalPsdPlotter():
     """This is a plotter used to simplify plotting and exploring a paired signal and its psd"""
     def __init__(self, title:str = None, alpha =0.7):
@@ -43,8 +44,6 @@ class SignalPsdPlotter():
         self.fig.update_yaxes(title_text='Normalized Power', row=2, col=1, )
 
     def show(self):
-        
-
         def _update_legend():
             unique_labels = set()
             for trace in self.fig['data']:
