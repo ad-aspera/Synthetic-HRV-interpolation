@@ -13,6 +13,8 @@ signal = BasicGenerator.generate_combined_sines(frequencies, magnitudes)
 
 sampled_HRV_signal = BasicGenerator.generate_sin_HRV(signal)
 
-measure = HRV_Metrics.TD_metrics(sampled_HRV_signal)
+measure_TD = HRV_Metrics.TD_metrics(sampled_HRV_signal)
+measure_FD = HRV_Metrics.FD_metrics(sampled_HRV_signal)
 
-print(measure.get_all_metrics())
+print(measure_TD.get_all_metrics())
+print(measure_FD.get_all_metrics())
