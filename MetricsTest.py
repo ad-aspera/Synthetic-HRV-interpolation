@@ -15,6 +15,14 @@ sampled_HRV_signal = BasicGenerator.generate_sin_HRV(signal)
 
 measure_TD = HRV_Metrics.TD_metrics(sampled_HRV_signal)
 measure_FD = HRV_Metrics.FD_metrics(sampled_HRV_signal)
-
-print(measure_TD.get_all_metrics())
-print(measure_FD.get_all_metrics())
+print(sampled_HRV_signal)
+print("\n TD Metrics:\n")
+print("="*50)
+for metric, value in measure_TD.get_all_metrics().items():
+    print(metric," : ", value)
+print("="*50)
+print("\n FD Metrics:\n")
+print("="*50)
+for metric, value in measure_FD.get_all_metrics().items():
+    print(metric," : ", value)
+print("="*50)
