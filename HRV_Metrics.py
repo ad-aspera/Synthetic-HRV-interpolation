@@ -3,7 +3,7 @@ Created on Wed Jan 29 15:35:35 2025
 
 @author: henryhollingworth
 
-Based on the review:
+Based on the definitions in the review:
 
 Shaffer, F. and Ginsberg, J.P., 2017. An overview of heart rate variability metrics and norms. Frontiers in Public Health, 5, p.258. Available at: https://pmc.ncbi.nlm.nih.gov/articles/PMC5624990/ [Accessed 28 Jan. 2025].
 
@@ -18,10 +18,11 @@ import SincPsd
 class TD_metrics:
     """class calculates time domain metrics for a pd.series type list of RR intervals"""
     def __init__(self, data: pd.Series):
-        if not isinstance(data, pd.Series):#establish correct type should be pd.series
-            raise TypeError(f"Expected a pandas Series, but got {type(HRV_data).__name__}")
-        self.data = data.dropna().values #drop Nan values
-
+        if not isinstance(data, pd.Series):
+            raise TypeError(f"Expected a pandas Series, but got {type(data).__name__}")
+        if data.isna().any():
+            raise ValueError("Input data contains NaN values. Please handle missing values before analysis.")
+        self.data = data.values
 
     def SDRR(self):
         """Standard deviation of RR intervals"""
@@ -51,8 +52,10 @@ class FD_metrics:
     """class calculates frequency domain metrics for a pd.series type list of RR intervals"""
     def __init__(self, data: pd.Series, sampling_frequency=100):
         if not isinstance(data, pd.Series):
-            raise TypeError(f"Expected a pandas Series, but got {type(HRV_data).__name__}")
-        self.data = data.dropna().values
+            raise TypeError(f"Expected a pandas Series, but got {type(data).__name__}")
+        if data.isna().any():
+            raise ValueError("Input data contains NaN values. Please handle missing values before analysis.")
+        self.data = data.values
         self.freq_domain_data = SincPsd.signal_to_PSD(self.data, sampling_frequency)
     
     def _get_band_power(self, low_freq, high_freq):
